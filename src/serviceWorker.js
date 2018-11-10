@@ -41,10 +41,12 @@ export function register(config) {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
+          /* eslint-disable no-console */
           console.log(
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit http://bit.ly/CRA-PWA'
           );
+          /* eslint-disable no-console */
         });
       } else {
         // Is not localhost. Just register service worker
