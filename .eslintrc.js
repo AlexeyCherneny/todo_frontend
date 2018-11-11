@@ -36,5 +36,7 @@ module.exports = {
     'react/react-in-jsx-scope': 1,
     'react/prefer-es6-class': 1,
     'react/jsx-no-bind': 1,
+    'no-debugger': 0,
+    'no-console': 0,
   },
 };
