@@ -128,3 +128,33 @@ export const setTaskStatus = ({ id, done }) => (dispatch, getState) => {
       dispatch(setTaskStatusError({ err: errMessage, id }));
     });
 };
+
+export const updateTaskStart = createAction('UPDATE_TASK_START');
+export const updateTaskError = createAction('UPDATE_TASK_ERROR');
+export const updateTaskSuccess = createAction('UPDATE_TASK_SUCCESS');
+
+export const updateTask = ({ id, title, done }) => (dispatch, getState) => {
+  const apiServices = apiServicesConstructor(dispatch, getState);
+  const data = { done, title };
+  dispatch(updateTaskStart(id));
+
+  const params = {
+    url: `/todosApi_1.0/tasks/task/${id}`,
+    data: buildUrlParams(encodeDataURI(data)),
+  };
+  apiServices
+    .put(params)
+    .then(res => {
+      if (isObject(res) && res.status === 'success') {
+        dispatch(updateTaskSuccess({ id, name: title, done }));
+        dispatch(closeTaskModal());
+      } else {
+        throw new Error('Unhandled resul on post tasks request');
+      }
+    })
+    .catch(err => {
+      const errMessage = isError(err) && isObject(err) ? err.message : err;
+
+      dispatch(updateTaskError({ err: errMessage, id }));
+    });
+};

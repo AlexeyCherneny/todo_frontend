@@ -13,6 +13,7 @@ import {
   openTaskModal,
   deleteTask,
   setTaskStatus,
+  updateTask,
 } from '../../actions/tasks';
 
 class Main extends Component {
@@ -21,6 +22,7 @@ class Main extends Component {
     fetchTasks: PropTypes.func,
     deleteTask: PropTypes.func,
     setTaskStatus: PropTypes.func,
+    updateTask: PropTypes.func,
     isTasksInProcess: PropTypes.bool,
     isTasksLoaded: PropTypes.bool,
     isTaskModalOpen: PropTypes.bool,
@@ -45,8 +47,8 @@ class Main extends Component {
       closeTaskModal,
       deleteTask,
       setTaskStatus,
+      updateTask,
     } = this.props;
-
     return (
       <Grid>
         <Header />
@@ -61,6 +63,7 @@ class Main extends Component {
           closeTaskModal={closeTaskModal}
           setTaskStatus={setTaskStatus}
           deleteTask={deleteTask}
+          updateTask={updateTask}
         />
       </Grid>
     );
@@ -78,10 +81,11 @@ const mapStateToProps = ({ tasks }) => ({
 const mapDispatchToProps = dispatch => ({
   createTask: args => dispatch(createTask(args)),
   closeTaskModal: () => dispatch(closeTaskModal()),
-  openTaskModal: () => dispatch(openTaskModal()),
+  openTaskModal: id => dispatch(openTaskModal(id)),
   fetchTasks: () => dispatch(fetchTasks()),
   deleteTask: id => dispatch(deleteTask(id)),
   setTaskStatus: id => dispatch(setTaskStatus(id)),
+  updateTask: args => dispatch(updateTask(args)),
 });
 
 export default connect(

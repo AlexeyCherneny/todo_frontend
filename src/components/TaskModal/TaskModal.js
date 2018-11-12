@@ -7,6 +7,7 @@ import {
   InputLabel,
   Button,
   LinearProgress,
+  Checkbox,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
@@ -31,13 +32,23 @@ class TaskModal extends Component {
     onSubmit: PropTypes.func,
     isTaskInProcess: PropTypes.bool,
     onClose: PropTypes.func,
+    editingTask: PropTypes.object,
   };
 
-  state = {
-    form: {
-      title: '',
-    },
-  };
+  constructor(props) {
+    super(props);
+
+    const { editingTask } = props;
+
+    this.state = {
+      form: {
+        title: editingTask ? editingTask.name : '',
+        done: editingTask ? editingTask.done : false,
+      },
+
+      isEditing: !!editingTask,
+    };
+  }
 
   onChange = args => {
     const { name, value } = args.target;
@@ -55,15 +66,17 @@ class TaskModal extends Component {
   onSubmit = e => {
     e.preventDefault();
 
-    const { onSubmit } = this.props;
+    const { onSubmit, editingTask } = this.props;
     const { form } = this.state;
 
-    onSubmit({ title: form.title, done: false });
+    editingTask
+      ? onSubmit({ id: editingTask._id, title: form.title, done: false })
+      : onSubmit({ title: form.title, done: false });
   };
 
   render() {
     const { classes, isOpen, onClose, isTaskInProcess } = this.props;
-    const { form } = this.state;
+    const { form, isEditing } = this.state;
 
     return (
       <Modal open={isOpen} onClose={onClose}>
@@ -76,25 +89,48 @@ class TaskModal extends Component {
               fullWidth
               disabled={isTaskInProcess}
             >
-              <InputLabel htmlFor="email">Title</InputLabel>
+              <InputLabel htmlFor="title">Title</InputLabel>
               <Input
                 name="title"
                 id="title"
                 onChange={this.onChange}
                 value={form.title}
+                autoComplete="off"
                 autoFocus
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              disabled={isTaskInProcess}
-              className={classes.submit}
-            >
-              Add
-            </Button>
+            <FormControl margin="normal" fullWidth disabled={isTaskInProcess}>
+              <Checkbox
+                name="done"
+                id="done"
+                onChange={this.onChange}
+                value={form.done}
+                autoFocus
+              />
+            </FormControl>
+            {isEditing ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={isTaskInProcess}
+                className={classes.submit}
+              >
+                Update
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={isTaskInProcess}
+                className={classes.submit}
+              >
+                Add
+              </Button>
+            )}
           </form>
         </div>
       </Modal>

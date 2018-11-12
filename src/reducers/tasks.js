@@ -15,6 +15,9 @@ import {
   setTaskStatusStart,
   setTaskStatusError,
   setTaskStatusSuccess,
+  updateTaskStart,
+  updateTaskError,
+  updateTaskSuccess,
 } from '../actions/tasks';
 
 const defaultState = {
@@ -92,11 +95,29 @@ const overlay = createReducer(
       };
     },
 
-    [openTaskModal]: state => ({
-      ...state,
+    [openTaskModal]: (state, id) => {
+      const tasks = state.tasks.map(task => {
+        if (task._id === id) {
+          return {
+            ...task,
 
-      isTaskModalOpen: true,
-    }),
+            processes: {
+              ...task.processes,
+
+              isEditing: true,
+            },
+          };
+        }
+        return task;
+      });
+
+      return {
+        ...state,
+
+        tasks,
+        isTaskModalOpen: true,
+      };
+    },
     [closeTaskModal]: state => ({
       ...state,
 
@@ -214,6 +235,78 @@ const overlay = createReducer(
               ...task.processes,
 
               isChangingStatus: false,
+            },
+          };
+        }
+        return task;
+      });
+
+      return {
+        ...state,
+
+        tasks,
+      };
+    },
+
+    [updateTaskStart]: (state, id) => {
+      const tasks = state.tasks.map(task => {
+        if (task._id === id) {
+          return {
+            ...task,
+
+            processes: {
+              ...task.processes,
+
+              isEditing: true,
+            },
+          };
+        }
+        return task;
+      });
+
+      return {
+        ...state,
+
+        tasks,
+      };
+    },
+    [updateTaskError]: (state, { err, id, name, done }) => {
+      const tasks = state.tasks.map(task => {
+        if (task._id === id) {
+          return {
+            ...task,
+            name,
+            done,
+
+            processes: {
+              ...task.processes,
+
+              isEditing: false,
+            },
+          };
+        }
+        return task;
+      });
+
+      return {
+        ...state,
+
+        tasks,
+        err,
+      };
+    },
+    [updateTaskSuccess]: (state, { id, name, done }) => {
+      const tasks = state.tasks.map(task => {
+        if (task._id === id) {
+          return {
+            ...task,
+            name,
+            done,
+
+            processes: {
+              ...task.processes,
+
+              isEditing: false,
             },
           };
         }

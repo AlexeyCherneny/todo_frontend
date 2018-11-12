@@ -31,6 +31,7 @@ class Todos extends Component {
     closeTaskModal: PropTypes.func.isRequired,
     deleteTask: PropTypes.func.isRequired,
     setTaskStatus: PropTypes.func.isRequired,
+    updateTask: PropTypes.func.isRequired,
   };
 
   deleteTask = id => () => {
@@ -39,10 +40,16 @@ class Todos extends Component {
     deleteTask(id);
   };
 
-  setTaskStatus = ({ id, done }) => () => {
+  changeTaskStatus = ({ id, done }) => () => {
     const { setTaskStatus } = this.props;
 
     setTaskStatus({ id, done: !done });
+  };
+
+  editTask = id => () => {
+    const { openTaskModal } = this.props;
+
+    openTaskModal(id);
   };
 
   renderTasks = () => {
@@ -90,6 +97,7 @@ class Todos extends Component {
             <ListItemIcon>
               <IconButton
                 className={classes.taskIconButton}
+                onClick={this.editTask(id)}
                 disabled={isEditing}
               >
                 <Edit className={classes.taskAction} />
@@ -112,7 +120,7 @@ class Todos extends Component {
             </ListItemIcon>
             <ListItemIcon className={classes.taskIcon}>
               <IconButton
-                onClick={this.setTaskStatus({ id, done })}
+                onClick={this.changeTaskStatus({ id, done })}
                 className={classes.taskIconButton}
                 disabled={isChangingStatus}
               >
@@ -140,15 +148,22 @@ class Todos extends Component {
       isTaskModalOpen,
       openTaskModal,
       closeTaskModal,
+      tasks,
+      updateTask,
     } = this.props;
+
+    const editingTask = tasks.find(
+      task => task.processes && task.processes.isEditing
+    );
 
     return (
       <main className={classes.content}>
         {isTaskModalOpen ? (
           <TaskModal
             isOpen={isTaskModalOpen}
-            onSubmit={createTask}
+            onSubmit={editingTask ? updateTask : createTask}
             onClose={closeTaskModal}
+            editingTask={editingTask}
             isCreatingTaskInProcess={isCreatingTaskInProcess}
           />
         ) : null}
