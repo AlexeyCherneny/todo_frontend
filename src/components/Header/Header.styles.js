@@ -1,23 +1,17 @@
-const drawerWidth = 240;
-
 const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
+    padding: `${theme.spacing.unit}px 0`,
+    backgroundColor: '#212121',
+    color: 'white',
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
+  titleMain: {
+    fontSize: 27,
   },
-
-  appBarSpacer: theme.mixins.toolbar,
 });
 
 export default styles;

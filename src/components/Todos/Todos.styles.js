@@ -15,6 +15,7 @@ const styles = theme => ({
   appBarSpacer: theme.mixins.toolbar,
   paper: {
     marginTop: theme.spacing.unit * 8,
+    backgroundColor: '#EEEEEE',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -34,8 +35,8 @@ const styles = theme => ({
   },
   task: {
     color: 'white',
-    border: '1px solid #0091ea',
-    backgroundColor: '#0091ea',
+    border: '1px solid #29B6F6',
+    backgroundColor: '#29B6F6',
     borderRadius: 5,
     margin: `${theme.spacing.unit}px 0`,
   },
