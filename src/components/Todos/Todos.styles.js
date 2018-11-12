@@ -46,6 +46,21 @@ const styles = theme => ({
   taskAction: {
     color: 'white',
   },
+  addTaskBtn: {
+    backgroundColor: '#0091ea',
+    color: 'white',
+    padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2.5}px`,
+    fontSize: 25,
+  },
+  fabProgress: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    zIndex: 1,
+  },
+  taskIcon: {
+    position: 'relative',
+  },
 });
 
 export default styles;

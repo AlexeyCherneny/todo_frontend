@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -8,58 +8,150 @@ import {
   ListItemText,
   ListItemIcon,
   IconButton,
+  LinearProgress,
+  CircularProgress,
+  Button,
 } from '@material-ui/core';
-import { Edit, Delete, Done } from '@material-ui/icons';
+import PropTypes from 'prop-types';
+import { Edit, Delete, Done, Close } from '@material-ui/icons';
+
+import TaskModal from '../TaskModal/TaskModal';
 
 import styles from './Todos.styles';
 
-const tasks = [
-  { title: 'Hello world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-  { title: 'Bye world' },
-];
-
 class Todos extends Component {
-  renderListItem = task => {
-    const { classes } = this.props;
-    return (
-      <ListItem className={classes.task}>
-        <ListItemText>
-          <Typography className={classes.taskTitle} component="div">
-            {task.title}
-          </Typography>
-        </ListItemText>
-        <ListItemIcon>
-          <IconButton>
-            <Edit className={classes.taskAction} />
-          </IconButton>
-        </ListItemIcon>
-        <ListItemIcon>
-          <IconButton>
-            <Delete className={classes.taskAction} />
-          </IconButton>
-        </ListItemIcon>
-        <ListItemIcon>
-          <IconButton>
-            <Done className={classes.taskAction} />
-          </IconButton>
-        </ListItemIcon>
-      </ListItem>
-    );
+  static propTypes = {
+    tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    createTask: PropTypes.func.isRequired,
+    isTasksInProcess: PropTypes.bool.isRequired,
+    isCreatingTaskInProcess: PropTypes.bool.isRequired,
+    isTaskModalOpen: PropTypes.bool.isRequired,
+    isTasksLoaded: PropTypes.bool.isRequired,
+    openTaskModal: PropTypes.func.isRequired,
+    closeTaskModal: PropTypes.func.isRequired,
+    deleteTask: PropTypes.func.isRequired,
+    setTaskStatus: PropTypes.func.isRequired,
+  };
+
+  deleteTask = id => () => {
+    const { deleteTask } = this.props;
+
+    deleteTask(id);
+  };
+
+  setTaskStatus = ({ id, done }) => () => {
+    const { setTaskStatus } = this.props;
+
+    setTaskStatus({ id, done: !done });
+  };
+
+  renderTasks = () => {
+    const { isTasksInProcess, isTasksLoaded, err } = this.props;
+
+    if (err) {
+      return this.renderError();
+    }
+
+    if (!isTasksLoaded && isTasksInProcess) {
+      return <LinearProgress />;
+    }
+
+    if (isTasksInProcess) {
+      return (
+        <Fragment>
+          <LinearProgress />
+          {this.renderTasksList()}
+        </Fragment>
+      );
+    }
+
+    return this.renderTasksList();
+  };
+
+  renderError = () => {
+    return <Typography component="div">Error</Typography>;
+  };
+
+  renderTasksList = () => {
+    const { classes, tasks } = this.props;
+
+    if (Array.isArray(tasks) && tasks.length) {
+      return tasks.map(task => {
+        const { isDeleting, isEditing, isChangingStatus } = task.processes;
+        const { _id: id, name, done } = task;
+
+        return (
+          <ListItem className={classes.task} key={id}>
+            <ListItemText>
+              <Typography className={classes.taskTitle} component="div">
+                {name}
+              </Typography>
+            </ListItemText>
+            <ListItemIcon>
+              <IconButton
+                className={classes.taskIconButton}
+                disabled={isEditing}
+              >
+                <Edit className={classes.taskAction} />
+                {isEditing ? (
+                  <CircularProgress className={classes.fabProgress} />
+                ) : null}
+              </IconButton>
+            </ListItemIcon>
+            <ListItemIcon>
+              <IconButton
+                className={classes.taskIconButton}
+                onClick={this.deleteTask(id)}
+                disabled={isDeleting}
+              >
+                <Delete className={classes.taskAction} />
+                {isDeleting ? (
+                  <CircularProgress className={classes.fabProgress} />
+                ) : null}
+              </IconButton>
+            </ListItemIcon>
+            <ListItemIcon className={classes.taskIcon}>
+              <IconButton
+                onClick={this.setTaskStatus({ id, done })}
+                className={classes.taskIconButton}
+                disabled={isChangingStatus}
+              >
+                {done ? (
+                  <Done className={classes.taskAction} />
+                ) : (
+                  <Close className={classes.taskAction} />
+                )}
+                {isChangingStatus ? (
+                  <CircularProgress className={classes.fabProgress} />
+                ) : null}
+              </IconButton>
+            </ListItemIcon>
+          </ListItem>
+        );
+      });
+    }
   };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      createTask,
+      isCreatingTaskInProcess,
+      isTaskModalOpen,
+      openTaskModal,
+      closeTaskModal,
+    } = this.props;
 
     return (
       <main className={classes.content}>
+        {isTaskModalOpen ? (
+          <TaskModal
+            isOpen={isTaskModalOpen}
+            onSubmit={createTask}
+            onClose={closeTaskModal}
+            isCreatingTaskInProcess={isCreatingTaskInProcess}
+          />
+        ) : null}
         <div className={classes.appBarSpacer} />
         <Paper className={classes.paper}>
           <Typography
@@ -69,14 +161,14 @@ class Todos extends Component {
           >
             Tasks
           </Typography>
-          <List className={classes.tasks}>
-            {Array.isArray(tasks) && tasks.length
-              ? tasks.map(task => this.renderListItem(task))
-              : null}
-          </List>
+          <List className={classes.tasks}>{this.renderTasks()}</List>
+          <Button className={classes.addTaskBtn} onClick={openTaskModal}>
+            ADD TASK
+          </Button>
         </Paper>
       </main>
     );
   }
 }
+
 export default withStyles(styles)(Todos);
