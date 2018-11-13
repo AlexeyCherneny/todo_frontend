@@ -87,6 +87,7 @@ class Todos extends Component {
       deleteTask,
       tasks,
       updateTask,
+      swapTasks,
     } = this.props;
 
     const editingTask = tasks.find(
@@ -120,6 +121,7 @@ class Todos extends Component {
                 openTaskModal={openTaskModal}
                 deleteTask={deleteTask}
                 setTaskStatus={setTaskStatus}
+                swapTasks={swapTasks}
               />
             }
           </List>

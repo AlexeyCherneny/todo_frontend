@@ -14,6 +14,7 @@ import {
   deleteTask,
   setTaskStatus,
   updateTask,
+  swapTasks,
 } from '../../actions/tasks';
 
 class Main extends Component {
@@ -48,6 +49,7 @@ class Main extends Component {
       deleteTask,
       setTaskStatus,
       updateTask,
+      swapTasks,
     } = this.props;
     return (
       <Grid>
@@ -64,6 +66,7 @@ class Main extends Component {
           setTaskStatus={setTaskStatus}
           deleteTask={deleteTask}
           updateTask={updateTask}
+          swapTasks={swapTasks}
         />
       </Grid>
     );
@@ -86,6 +89,7 @@ const mapDispatchToProps = dispatch => ({
   deleteTask: id => dispatch(deleteTask(id)),
   setTaskStatus: id => dispatch(setTaskStatus(id)),
   updateTask: args => dispatch(updateTask(args)),
+  swapTasks: args => dispatch(swapTasks(args)),
 });
 
 export default connect(

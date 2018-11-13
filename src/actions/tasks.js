@@ -8,6 +8,8 @@ import {
   encodeDataURI,
 } from '../utils/utils';
 
+export const swapTasks = createAction('SWAP_TASKS');
+
 export const fetchTasksStart = createAction('FETCH_TASK_START');
 export const fetchTasksError = createAction('FETCH_TASK_ERROR');
 export const fetchTasksSuccess = createAction('FETCH_TASK_SUCCESS');

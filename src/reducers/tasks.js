@@ -18,6 +18,7 @@ import {
   updateTaskStart,
   updateTaskError,
   updateTaskSuccess,
+  swapTasks,
 } from '../actions/tasks';
 
 const defaultState = {
@@ -335,6 +336,23 @@ const overlay = createReducer(
         ...state,
 
         tasks,
+      };
+    },
+
+    [swapTasks]: (state, { dragIndex, hoverIndex }) => {
+      const { tasks } = state;
+
+      const dragedTask = tasks[dragIndex];
+      const hoveredTask = tasks[hoverIndex];
+
+      const sortedTasks = [...tasks];
+      sortedTasks[dragIndex] = hoveredTask;
+      sortedTasks[hoverIndex] = dragedTask;
+
+      return {
+        ...state,
+
+        tasks: sortedTasks,
       };
     },
   },
