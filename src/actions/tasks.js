@@ -23,7 +23,7 @@ export const fetchTasks = () => (dispatch, getState) => {
     .get(params)
     .then(tasks => {
       if (Array.isArray(tasks)) {
-        dispatch(fetchTasksSuccess(tasks));
+        setTimeout(() => dispatch(fetchTasksSuccess(tasks)), 1000);
       } else {
         throw new Error('Unhandled resul on get tasks request');
       }

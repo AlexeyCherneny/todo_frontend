@@ -8,6 +8,7 @@ import {
   Button,
   LinearProgress,
   Checkbox,
+  Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
@@ -63,6 +64,19 @@ class TaskModal extends Component {
     });
   };
 
+  onStatusChange = args => {
+    const { name, checked } = args.target;
+    const { form } = this.state;
+
+    this.setState({
+      form: {
+        ...form,
+
+        [name]: checked,
+      },
+    });
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
@@ -70,8 +84,8 @@ class TaskModal extends Component {
     const { form } = this.state;
 
     editingTask
-      ? onSubmit({ id: editingTask._id, title: form.title, done: false })
-      : onSubmit({ title: form.title, done: false });
+      ? onSubmit({ id: editingTask._id, title: form.title, done: form.done })
+      : onSubmit({ title: form.title, done: form.done });
   };
 
   render() {
@@ -100,11 +114,19 @@ class TaskModal extends Component {
               />
             </FormControl>
             <FormControl margin="normal" fullWidth disabled={isTaskInProcess}>
+              <Typography
+                className={classes.doneTitle}
+                component="h1"
+                variant="h5"
+              >
+                Done
+              </Typography>
               <Checkbox
                 name="done"
                 id="done"
-                onChange={this.onChange}
-                value={form.done}
+                color="default"
+                onChange={this.onStatusChange}
+                checked={form.done}
                 autoFocus
               />
             </FormControl>

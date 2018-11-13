@@ -1,7 +1,7 @@
 const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    padding: `${theme.spacing.unit}px 0`,
+    padding: `${theme.spacing.unit * 1.5}px 0`,
     backgroundColor: '#212121',
     color: 'white',
     transition: theme.transitions.create(['width', 'margin'], {

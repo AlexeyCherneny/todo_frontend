@@ -80,7 +80,7 @@ const mapStateToProps = ({ tasks }) => ({
 
 const mapDispatchToProps = dispatch => ({
   createTask: args => dispatch(createTask(args)),
-  closeTaskModal: () => dispatch(closeTaskModal()),
+  closeTaskModal: id => dispatch(closeTaskModal(id)),
   openTaskModal: id => dispatch(openTaskModal(id)),
   fetchTasks: () => dispatch(fetchTasks()),
   deleteTask: id => dispatch(deleteTask(id)),

@@ -4,17 +4,12 @@ import {
   Typography,
   Paper,
   List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  IconButton,
   LinearProgress,
-  CircularProgress,
   Button,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { Edit, Delete, Done, Close } from '@material-ui/icons';
 
+import TodosList from '../TodosList/TodosList';
 import TaskModal from '../TaskModal/TaskModal';
 
 import styles from './Todos.styles';
@@ -34,33 +29,22 @@ class Todos extends Component {
     updateTask: PropTypes.func.isRequired,
   };
 
-  deleteTask = id => () => {
-    const { deleteTask } = this.props;
-
-    deleteTask(id);
-  };
-
-  changeTaskStatus = ({ id, done }) => () => {
-    const { setTaskStatus } = this.props;
-
-    setTaskStatus({ id, done: !done });
-  };
-
-  editTask = id => () => {
-    const { openTaskModal } = this.props;
-
-    openTaskModal(id);
-  };
-
   renderTasks = () => {
-    const { isTasksInProcess, isTasksLoaded, err } = this.props;
+    const { isTasksInProcess, isTasksLoaded, err, classes } = this.props;
 
     if (err) {
       return this.renderError();
     }
 
     if (!isTasksLoaded && isTasksInProcess) {
-      return <LinearProgress />;
+      return (
+        <LinearProgress
+          classes={{
+            colorPrimary: classes.linearColorPrimary,
+            barColorPrimary: classes.linearBarColorPrimary,
+          }}
+        />
+      );
     }
 
     if (isTasksInProcess) {
@@ -79,65 +63,17 @@ class Todos extends Component {
     return <Typography component="div">Error</Typography>;
   };
 
-  renderTasksList = () => {
-    const { classes, tasks } = this.props;
+  onModalClose = () => {
+    const { closeTaskModal, tasks } = this.props;
 
-    if (Array.isArray(tasks) && tasks.length) {
-      return tasks.map(task => {
-        const { isDeleting, isEditing, isChangingStatus } = task.processes;
-        const { _id: id, name, done } = task;
+    const editingTask = tasks.find(
+      task => task.processes && task.processes.isEditing
+    );
 
-        return (
-          <ListItem className={classes.task} key={id}>
-            <ListItemText>
-              <Typography className={classes.taskTitle} component="div">
-                {name}
-              </Typography>
-            </ListItemText>
-            <ListItemIcon>
-              <IconButton
-                className={classes.taskIconButton}
-                onClick={this.editTask(id)}
-                disabled={isEditing}
-              >
-                <Edit className={classes.taskAction} />
-                {isEditing ? (
-                  <CircularProgress className={classes.fabProgress} />
-                ) : null}
-              </IconButton>
-            </ListItemIcon>
-            <ListItemIcon>
-              <IconButton
-                className={classes.taskIconButton}
-                onClick={this.deleteTask(id)}
-                disabled={isDeleting}
-              >
-                <Delete className={classes.taskAction} />
-                {isDeleting ? (
-                  <CircularProgress className={classes.fabProgress} />
-                ) : null}
-              </IconButton>
-            </ListItemIcon>
-            <ListItemIcon className={classes.taskIcon}>
-              <IconButton
-                onClick={this.changeTaskStatus({ id, done })}
-                className={classes.taskIconButton}
-                disabled={isChangingStatus}
-              >
-                {done ? (
-                  <Done className={classes.taskAction} />
-                ) : (
-                  <Close className={classes.taskAction} />
-                )}
-                {isChangingStatus ? (
-                  <CircularProgress className={classes.fabProgress} />
-                ) : null}
-              </IconButton>
-            </ListItemIcon>
-          </ListItem>
-        );
-      });
+    if (editingTask) {
+      return closeTaskModal(editingTask._id);
     }
+    return closeTaskModal();
   };
 
   render() {
@@ -147,7 +83,8 @@ class Todos extends Component {
       isCreatingTaskInProcess,
       isTaskModalOpen,
       openTaskModal,
-      closeTaskModal,
+      setTaskStatus,
+      deleteTask,
       tasks,
       updateTask,
     } = this.props;
@@ -162,7 +99,7 @@ class Todos extends Component {
           <TaskModal
             isOpen={isTaskModalOpen}
             onSubmit={editingTask ? updateTask : createTask}
-            onClose={closeTaskModal}
+            onClose={this.onModalClose}
             editingTask={editingTask}
             isCreatingTaskInProcess={isCreatingTaskInProcess}
           />
@@ -176,7 +113,16 @@ class Todos extends Component {
           >
             Tasks
           </Typography>
-          <List className={classes.tasks}>{this.renderTasks()}</List>
+          <List className={classes.tasks}>
+            {
+              <TodosList
+                tasks={tasks}
+                openTaskModal={openTaskModal}
+                deleteTask={deleteTask}
+                setTaskStatus={setTaskStatus}
+              />
+            }
+          </List>
           <Button className={classes.addTaskBtn} onClick={openTaskModal}>
             ADD TASK
           </Button>

@@ -12,6 +12,16 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+    backgroundColor: '#212121',
+    color: 'white',
+    fontSize: 18,
+    '&:hover': {
+      backgroundColor: '#616161',
+    },
+  },
+  doneTitle: {
+    margin: 'auto',
+    fontSize: 16,
   },
 });
 

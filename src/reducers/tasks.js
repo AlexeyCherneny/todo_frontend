@@ -118,11 +118,29 @@ const overlay = createReducer(
         isTaskModalOpen: true,
       };
     },
-    [closeTaskModal]: state => ({
-      ...state,
+    [closeTaskModal]: (state, id) => {
+      const tasks = state.tasks.map(task => {
+        if (task._id === id) {
+          return {
+            ...task,
 
-      isTaskModalOpen: false,
-    }),
+            processes: {
+              ...task.processes,
+
+              isEditing: false,
+            },
+          };
+        }
+        return task;
+      });
+
+      return {
+        ...state,
+
+        tasks,
+        isTaskModalOpen: false,
+      };
+    },
 
     [deleteTaskStart]: (state, id) => {
       const tasks = state.tasks.map(task => {
